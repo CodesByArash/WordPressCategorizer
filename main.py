@@ -6,14 +6,31 @@ from category_matcher import CategoryMatcher
 from utils import make_slug
 
 def main():
+    # Check if .env exists
+    if not os.path.exists('.env'):
+        print("Error: .env file not found!")
+        print("Please create a .env file with your WordPress and Ollama settings.")
+        return
+
     # Load environment variables
     load_dotenv()
     
+    # Get required environment variables
+    wp_url = os.getenv('WORDPRESS_URL')
+    wp_username = os.getenv('WORDPRESS_USERNAME')
+    wp_password = os.getenv('WORDPRESS_PASSWORD')
+    
+    # Validate required environment variables
+    if not all([wp_url, wp_username, wp_password]):
+        print("Error: Missing WordPress settings in .env file!")
+        print("Please set WORDPRESS_URL, WORDPRESS_USERNAME, and WORDPRESS_PASSWORD")
+        return
+    
     # Initialize clients
     wp_client = WordPressClient(
-        base_url=os.getenv('WORDPRESS_URL'),
-        username=os.getenv('WORDPRESS_USERNAME'),
-        password=os.getenv('WORDPRESS_PASSWORD')
+        base_url=wp_url,
+        username=wp_username,
+        password=wp_password
     )
     
     # Initialize Ollama client

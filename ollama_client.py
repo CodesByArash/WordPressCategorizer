@@ -14,13 +14,7 @@ class OllamaServerError(OllamaError):
 
 class OllamaClient:
     def __init__(self, model_name="llama3:latest", base_url="http://localhost:11434"):
-        """
-        Initialize Ollama client
-        
-        Args:
-            model_name (str): Name of the model to use (default: "llama3:latest")
-            base_url (str): Base URL for Ollama API (default: "http://localhost:11434")
-        """
+
         self.model_name = model_name
         self.base_url = base_url.rstrip('/')
         self.check_model_availability()
@@ -31,11 +25,7 @@ class OllamaClient:
             r = requests.get(f"{self.base_url}/api/tags", timeout=10)
             r.raise_for_status()
             models = r.json().get("models", [])
-            model_exists = any(
-                model["name"] == self.model_name or
-                model["name"].startswith(f"{self.model_name.split(':')[0]}:")
-                for model in models
-            )
+            model_exists = any(model["name"] == self.model_name for model in models)
             if not model_exists:
                 raise ModelNotAvailableError(
                     f"Model '{self.model_name}' is not installed. "
@@ -51,21 +41,6 @@ class OllamaClient:
             raise OllamaServerError(f"Error checking model availability: {e}")
 
     def get_category(self, text, max_retries=3, timeout=30):
-        """
-        Get category suggestion from Ollama
-        
-        Args:
-            text (str): The text to get category for
-            max_retries (int): Maximum number of retry attempts
-            timeout (int): Request timeout in seconds
-            
-        Returns:
-            str: Suggested category name
-            
-        Raises:
-            ModelNotAvailableError: If the model is not installed
-            OllamaServerError: If there are issues with Ollama server
-        """
         retry_count = 0
         last_error = None
         
