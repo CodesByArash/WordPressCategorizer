@@ -84,11 +84,10 @@ class OllamaClient:
                     timeout=timeout
                 )
                 r.raise_for_status()
-                
+
                 for line in r.iter_lines():
                     if not line:
                         continue
-                        
                     try:
                         data = json.loads(line)
                         if 'error' in data:
@@ -110,8 +109,7 @@ class OllamaClient:
                     except json.JSONDecodeError as e:
                         raise OllamaServerError(f"Error parsing Ollama response: {e}")
                         
-                raise OllamaServerError("No valid response from Ollama")
-                
+                raise OllamaServerError("No valid response from Ollama") 
             except (ConnectionError, Timeout) as e:
                 last_error = OllamaServerError(f"Connection error with Ollama server: {e}")
             except RequestException as e:
@@ -128,12 +126,3 @@ class OllamaClient:
                 time.sleep(wait_time)
         
         raise last_error or OllamaServerError("All retry attempts failed")
-
-# For backward compatibility
-def get_category_from_ollama(text, max_retries=3, timeout=30, model_name="llama3:latest"):
-    """
-    Legacy function for backward compatibility.
-    Use OllamaClient class for new code.
-    """
-    client = OllamaClient(model_name=model_name)
-    return client.get_category(text, max_retries=max_retries, timeout=timeout) 
