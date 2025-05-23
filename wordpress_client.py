@@ -45,17 +45,22 @@ class WordPressClient:
         return categories
 
     def get_uncategorized_posts(self):
-        """Get all posts in the uncategorized category"""
+        """Get posts that are either only in 'Uncategorized' or have no categories at all"""
         posts = []
+        uncategorized_posts = []
         page = 1
+
         while True:
-            r = requests.get(f"{self.base_url}/posts?categories=1&per_page=100&page={page}", headers=self.headers)
+            r = requests.get(
+                f"{self.base_url}/posts?per_page=100&page={page}",
+                headers=self.headers
+            )
             if r.status_code == 400:
                 data = r.json()
                 if data.get("code") == "rest_post_invalid_page_number":
                     break
                 else:
-                    r.raise_for_status() 
+                    r.raise_for_status()
             else:
                 r.raise_for_status()
 
@@ -70,10 +75,16 @@ class WordPressClient:
             posts.extend(data)
             page += 1
 
-        if not posts:
-            raise RuntimeError("No uncategorized posts found.")
+        for post in posts:
+            cat_ids = post.get("categories", [])
+            if not cat_ids or cat_ids == [1]:  # either no categories or only uncategorized
+                uncategorized_posts.append(post)
 
-        return posts
+        if not uncategorized_posts:
+            raise RuntimeError("No uncategorized or category-less posts found.")
+
+        return uncategorized_posts
+
 
     def create_category(self, name):
         """Create a new category"""
