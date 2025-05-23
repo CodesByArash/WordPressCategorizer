@@ -11,6 +11,6 @@ class CategoryMatcher:
         similarities = util.cos_sim(candidate_embedding, embeddings)[0]
         best_idx = similarities.argmax().item()
         best_score = similarities[best_idx].item()
-        if best_score >= 0.7:  # آستانه شباهت
+        if best_score >= 0.7:
             return categories[best_idx]['id'], categories[best_idx]['name']
         return None, None
