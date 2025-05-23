@@ -82,7 +82,6 @@ def main():
                 
     except Exception as e:
         print(f"Error in main process: {e}")
-        raise
 
 if __name__ == "__main__":
     main()
