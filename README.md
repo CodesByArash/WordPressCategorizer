@@ -26,7 +26,7 @@ WORDPRESS_PASSWORD=your-password
 
 # Ollama Configuration
 OLLAMA_MODEL=llama3:latest
-OLLAMA_BASE_URL=http://localhost:11434
+OLLAMA_BASE_URL=http://ollama:11434
 
 # Transformer Configuration
 TRANSFORMER_MODEL=all-MiniLM-L6-v2
