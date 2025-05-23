@@ -12,8 +12,9 @@ category_matcher = CategoryMatcher()
 def main():
     try:
         all_cats = wp_client.get_all_categories()
+        print(f'{len(all_cats)} categories found')
         uncategorized_posts = wp_client.get_uncategorized_posts()
-        print("posts got")
+        print(f'{len(uncategorized_posts)} posts to process')
         for post in uncategorized_posts:
             post_id = post['id']
             content = post['content']['rendered']
