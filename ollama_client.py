@@ -12,13 +12,19 @@ class ModelNotAvailableError(OllamaError):
 class OllamaServerError(OllamaError):
     pass
 
-def check_model_availability(model_name="llama3"):
+def check_model_availability(model_name="llama3:latest"):
 
     try:
         r = requests.get(f"http://localhost:11434/api/tags", timeout=10)
         r.raise_for_status()
         models = r.json().get("models", [])
-        if not any(model["name"] == model_name for model in models):
+        # Check if model exists with either base name or full name with tag
+        model_exists = any(
+            model["name"] == model_name or  # exact match
+            model["name"].startswith(f"{model_name}:")  # match with any tag
+            for model in models
+        )
+        if not model_exists:
             raise ModelNotAvailableError(f"Model '{model_name}' is not installed. Please install it using: ollama pull {model_name}")
         return True
     except ConnectionError:
