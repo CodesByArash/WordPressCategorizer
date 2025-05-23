@@ -37,18 +37,47 @@ pip install -r requirements.txt
 ```
 
 4. Install Ollama:
-   - Download and install from [Ollama's website](https://ollama.com)
-   - Start Ollama server in a separate terminal:
-```bash
-ollama serve
-```
+   - Download Ollama from [Ollama's official website](https://ollama.com)
+   - For Windows:
+     - Download and run the Windows installer
+     - After installation, Ollama will start automatically
+     - You can verify the installation by opening PowerShell and running:
+       ```bash
+       ollama --version
+       ```
+   - For Linux:
+     ```bash
+     curl -fsSL https://ollama.com/install.sh | sh
+     ```
+   - For macOS:
+     ```bash
+     curl -fsSL https://ollama.com/install.sh | sh
+     ```
 
-5. Download the required Ollama model:
-```bash
-ollama pull llama2:latest
-```
+5. Start Ollama Server:
+   - On Windows:
+     - Ollama runs as a service automatically after installation
+     - You can check its status in Task Manager
+     - To restart: Open PowerShell as Administrator and run:
+       ```bash
+       net stop ollama
+       net start ollama
+       ```
+   - On Linux/macOS:
+     ```bash
+     ollama serve
+     ```
 
-6. Create `.env` file in the project root:
+6. Download the required Ollama model:
+   ```bash
+   # Pull the model (this might take a few minutes depending on your internet speed)
+   ollama pull llama2:latest
+
+   # Verify the model is installed
+   ollama list
+   ```
+
+7. Create `.env` file in the project root:
 ```env
 # WordPress Configuration
 WORDPRESS_URL=https://your-wordpress-site.com/wp-json/wp/v2
@@ -66,13 +95,12 @@ TRANSFORMER_MODEL=all-MiniLM-L6-v2
 ## Running the Application
 
 1. Make sure Ollama server is running:
-```bash
-ollama serve
-```
+   - On Windows: Check Task Manager for "Ollama" service
+   - On Linux/macOS: Run `ollama serve` in a terminal
 
 2. Run the application:
 ```bash
-python main.py
+python src/main.py
 ```
 
 ## Project Structure
@@ -104,13 +132,90 @@ python main.py
 3. Uses Sentence Transformer to find the best matching existing category
 4. Updates posts with the matched or newly created categories
 
-## Troubleshooting
+## Troubleshooting Ollama
 
-### Ollama Issues
-- Ensure Ollama is running (`ollama serve`)
-- Verify model is installed (`ollama list`)
-- Check if port 11434 is accessible
-- Try pulling the model again if needed (`ollama pull llama2:latest`)
+### Common Issues and Solutions
+
+1. **Ollama Service Not Running**
+   - Windows:
+     - Open Task Manager
+     - Look for "Ollama" in the Services tab
+     - If not running, start it from Services
+     - Or run in PowerShell (as Administrator):
+       ```bash
+       net start ollama
+       ```
+   - Linux/macOS:
+     - Check if Ollama is running:
+       ```bash
+       ps aux | grep ollama
+       ```
+     - If not running, start it:
+       ```bash
+       ollama serve
+       ```
+
+2. **Model Not Found**
+   - Verify model installation:
+     ```bash
+     ollama list
+     ```
+   - If model is missing, pull it again:
+     ```bash
+     ollama pull llama2:latest
+     ```
+
+3. **Connection Issues**
+   - Check if Ollama is accessible:
+     ```bash
+     curl http://localhost:11434/api/tags
+     ```
+   - If you get a connection error:
+     - Ensure Ollama service is running
+     - Check if port 11434 is not blocked by firewall
+     - Try restarting Ollama service
+
+4. **Out of Memory**
+   - If you get memory errors:
+     - Close other applications
+     - Try a smaller model:
+       ```bash
+       ollama pull llama2:7b
+       ```
+     - Update your `.env`:
+       ```env
+       OLLAMA_MODEL=llama2:7b
+       ```
+
+5. **Slow Performance**
+   - Ensure you have enough RAM (at least 8GB recommended)
+   - Close other resource-intensive applications
+   - Consider using a smaller model
+   - Check your CPU/GPU usage
+
+### Model Management
+
+- List installed models:
+  ```bash
+  ollama list
+  ```
+
+- Remove a model:
+  ```bash
+  ollama rm llama2:latest
+  ```
+
+- Pull a specific version:
+  ```bash
+  ollama pull llama2:7b
+  ```
+
+- Update a model:
+  ```bash
+  ollama pull llama2:latest --force
+  ```
+
+## Troubleshooting
 
 ### WordPress Issues
 - Verify WordPress credentials
