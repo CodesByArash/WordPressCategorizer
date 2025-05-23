@@ -1,23 +1,23 @@
 # WordPress Category Matcher
 
-این پروژه از Ollama برای دسته‌بندی خودکار پست‌های وردپرس بر اساس محتوای آنها استفاده می‌کند.
+This project uses Ollama to automatically categorize WordPress posts based on their content.
 
-## پیش‌نیازها
+## Prerequisites
 
-- Docker و Docker Compose
+- Docker and Docker Compose
 - Git
-- دسترسی به یک سایت وردپرس
-- دسترسی به Ollama (محلی یا سرور)
+- Access to a WordPress site
+- Access to Ollama (local or server)
 
-## نصب و راه‌اندازی
+## Installation & Setup
 
-1. کلون کردن مخزن:
+1. Clone the repository:
 ```bash
 git clone <repository-url>
 cd WordPressProject
 ```
 
-2. ساخت فایل `.env`:
+2. Create `.env` file:
 ```bash
 # WordPress Configuration
 WORDPRESS_URL=https://your-wordpress-site.com/wp-json/wp/v2
@@ -32,73 +32,73 @@ OLLAMA_BASE_URL=http://localhost:11434
 TRANSFORMER_MODEL=all-MiniLM-L6-v2
 ```
 
-3. اجرای با Docker:
+3. Run with Docker:
 ```bash
 docker-compose up --build
 ```
 
-## ساختار پروژه
+## Project Structure
 
-- `main.py`: فایل اصلی برنامه
-- `ollama_client.py`: کلاینت Ollama برای ارتباط با مدل
-- `wordpress_client.py`: کلاینت وردپرس برای مدیریت پست‌ها و دسته‌بندی‌ها
-- `category_matcher.py`: منطق تطبیق دسته‌بندی‌ها
-- `utils.py`: توابع کمکی
+- `main.py`: Main application file
+- `ollama_client.py`: Ollama client for model interaction
+- `wordpress_client.py`: WordPress client for post and category management
+- `category_matcher.py`: Category matching logic
+- `utils.py`: Utility functions
 
-## تنظیمات
+## Configuration
 
 ### WordPress
-- `WORDPRESS_URL`: آدرس API وردپرس
-- `WORDPRESS_USERNAME`: نام کاربری وردپرس
-- `WORDPRESS_PASSWORD`: رمز عبور وردپرس
+- `WORDPRESS_URL`: WordPress API URL
+- `WORDPRESS_USERNAME`: WordPress username
+- `WORDPRESS_PASSWORD`: WordPress password
 
 ### Ollama
-- `OLLAMA_MODEL`: نام مدل Ollama (پیش‌فرض: llama3:latest)
-- `OLLAMA_BASE_URL`: آدرس سرور Ollama (پیش‌فرض: http://localhost:11434)
+- `OLLAMA_MODEL`: Ollama model name (default: llama3:latest)
+- `OLLAMA_BASE_URL`: Ollama server URL (default: http://localhost:11434)
 
 ### Transformer
-- `TRANSFORMER_MODEL`: نام مدل Sentence Transformer (پیش‌فرض: all-MiniLM-L6-v2)
+- `TRANSFORMER_MODEL`: Sentence Transformer model name (default: all-MiniLM-L6-v2)
 
-## نحوه کار
+## How It Works
 
-1. برنامه به وردپرس متصل می‌شود
-2. پست‌های بدون دسته‌بندی را پیدا می‌کند
-3. از Ollama برای پیشنهاد دسته‌بندی استفاده می‌کند
-4. از Sentence Transformer برای تطبیق با دسته‌بندی‌های موجود استفاده می‌کند
-5. دسته‌بندی‌های مناسب را به پست‌ها اضافه می‌کند
+1. Connects to WordPress
+2. Finds uncategorized posts
+3. Uses Ollama to suggest categories
+4. Uses Sentence Transformer to match with existing categories
+5. Updates posts with appropriate categories
 
-## نکات مهم
+## Important Notes
 
-- فایل `.env` را در `.gitignore` قرار داده‌ایم و نباید در مخزن گیت قرار بگیرد
-- برای امنیت بیشتر، از رمزهای عبور قوی استفاده کنید
-- مطمئن شوید که سرور Ollama در دسترس است
-- مدل‌های مورد نیاز در اولین اجرا دانلود می‌شوند
+- `.env` file is in `.gitignore` and should not be committed to the repository
+- Use strong passwords for security
+- Ensure Ollama server is accessible
+- Required models will be downloaded on first run
 
-## عیب‌یابی
+## Troubleshooting
 
-### خطای اتصال به Ollama
-- مطمئن شوید که Ollama در حال اجراست
-- آدرس `OLLAMA_BASE_URL` را بررسی کنید
-- پورت 11434 باید در دسترس باشد
+### Ollama Connection Issues
+- Ensure Ollama is running
+- Check `OLLAMA_BASE_URL` setting
+- Port 11434 should be accessible
 
-### خطای وردپرس
-- اعتبارنامه‌های وردپرس را بررسی کنید
-- مطمئن شوید که API وردپرس فعال است
-- آدرس `WORDPRESS_URL` را بررسی کنید
+### WordPress Issues
+- Verify WordPress credentials
+- Ensure WordPress API is enabled
+- Check `WORDPRESS_URL` setting
 
-### خطای مدل
-- مطمئن شوید که مدل Ollama نصب شده است
-- فضای کافی برای دانلود مدل‌ها داشته باشید
-- اتصال اینترنت را بررسی کنید
+### Model Issues
+- Verify Ollama model is installed
+- Ensure sufficient disk space for model downloads
+- Check internet connection
 
-## مشارکت
+## Contributing
 
-برای مشارکت در پروژه:
-1. یک fork از مخزن ایجاد کنید
-2. یک branch جدید بسازید
-3. تغییرات خود را commit کنید
-4. یک pull request ایجاد کنید
+To contribute to the project:
+1. Fork the repository
+2. Create a new branch
+3. Commit your changes
+4. Create a pull request
 
-## لایسنس
+## License
 
 MIT License 
