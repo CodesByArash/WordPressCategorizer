@@ -6,44 +6,40 @@ from category_matcher import CategoryMatcher
 from utils import make_slug
 
 def main():
-    # Check if .env exists
-    if not os.path.exists('.env'):
+    project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    env_path = os.path.join(project_root, '.env')
+
+    if not os.path.exists(env_path):
         print("Error: .env file not found!")
         print("Please create a .env file with your WordPress and Ollama settings.")
         return
 
-    # Load environment variables
-    load_dotenv()
+    load_dotenv(env_path)
     
-    # Get required environment variables
     wp_url = os.getenv('WORDPRESS_URL')
     wp_username = os.getenv('WORDPRESS_USERNAME')
     wp_password = os.getenv('WORDPRESS_PASSWORD')
     
-    # Validate required environment variables
     if not all([wp_url, wp_username, wp_password]):
         print("Error: Missing WordPress settings in .env file!")
         print("Please set WORDPRESS_URL, WORDPRESS_USERNAME, and WORDPRESS_PASSWORD")
-        return
-    
-    # Initialize clients
-    wp_client = WordPressClient(
-        base_url=wp_url,
-        username=wp_username,
-        password=wp_password
-    )
-    
-    # Initialize Ollama client
-    ollama_client = OllamaClient(
-        model_name=os.getenv('OLLAMA_MODEL', 'llama3:latest'),
-        base_url=os.getenv('OLLAMA_BASE_URL', 'http://localhost:11434')
-    )
-    
-    # Initialize category matcher
-    category_matcher = CategoryMatcher()
-    
+        return    
     try:
-        # Get uncategorized posts
+
+        wp_client = WordPressClient(
+            base_url=wp_url,
+            username=wp_username,
+            password=wp_password
+        )
+        
+        ollama_client = OllamaClient(
+            model_name=os.getenv('OLLAMA_MODEL', 'llama3:latest'),
+            base_url=os.getenv('OLLAMA_BASE_URL', 'http://localhost:11434')
+        )
+        
+        category_matcher = CategoryMatcher()
+
+
         posts = wp_client.get_uncategorized_posts()
         print(f"Found {len(posts)} uncategorized posts")
         
@@ -51,23 +47,18 @@ def main():
             try:
                 print(f"\nProcessing post: {post['title']['rendered']}")
                 
-                # Get category suggestion from Ollama
                 try:
                     suggested_category = ollama_client.get_category(post['content']['rendered'])
                     print(f"Suggested category: {suggested_category}")
                     
-                    # Get existing categories
                     existing_categories = wp_client.get_all_categories()
                     
-                    # Find best matching category
                     category_id, category_name = category_matcher.find_best_category(suggested_category, existing_categories)
                     
                     if category_id:
-                        # Category found, update post
                         wp_client.update_post_category(post['id'], category_id)
                         print(f"Updated category '{category_name}' for post {post['id']}")
                     else:
-                        # No matching category found, create new one
                         category_id = wp_client.create_category(suggested_category)
                         wp_client.update_post_category(post['id'], category_id)
                         print(f"Created and set new category '{suggested_category}' for post {post['id']}")
